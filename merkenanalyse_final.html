@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merkenanalyse – Automotive Design – Manuel van Es</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,600;0,800;1,300&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark:#0A0E1A; --card:#161D2E; --border:#1E2D45;
+    --text:#E8EDF5; --muted:#7B8FAD;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  html, body { width:100%; overflow-x:hidden; }
+  body { background:var(--dark); color:var(--text); font-family:'Barlow',sans-serif; font-weight:300; font-size:12.5px; line-height:1.6; }
+
+  @media print {
+    .no-print { display:none; }
+    .cover { page-break-after:always; height:auto; min-height:0; }
+    .brand-cover { page-break-before:always; page-break-after:always; height:auto; min-height:0; }
+    .avoid-break { page-break-inside:avoid; }
+    .section-label, .section-title { page-break-after:avoid; }
+    .card,.feature-block,.tl-item,.competitor,.exist-block,.stat-row { page-break-inside:avoid; }
+  }
+
+  /* ── COVER ── */
+  .cover {
+    position:relative; width:100%; min-height:100vh;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    overflow:hidden; background:var(--dark);
+  }
+  .cover-bg { position:absolute; inset:0; }
+  .cover-img-wrap {
+    position:absolute !important;
+    top:0 !important; left:0 !important; right:0 !important; bottom:0 !important;
+    width:100% !important; height:100% !important;
+  }
+  .cover-img-wrap img {
+    display:block;
+    width:100%; height:100%; object-fit:cover; object-position:center;
+    opacity:0.5; mix-blend-mode:luminosity;
+  }
+  .cover-img-wrap .ph {
+    position:absolute; inset:0;
+    width:100%; height:100%; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:10px;
+    color:var(--muted); font-family:'Barlow Condensed',sans-serif;
+    font-size:11px; letter-spacing:2px; text-transform:uppercase; opacity:0.4;
+  }
+  .cover-img-wrap .ph svg { width:56px; height:56px; opacity:0.4; }
+  .cover-grad { position:absolute; inset:0; background:linear-gradient(to right, var(--dark) 40%, transparent 72%); }
+  .cover-body { position:relative; z-index:2; padding:0 64px 64px; max-width:580px; }
+  .cover-eyebrow {
+    font-family:'Barlow Condensed',sans-serif; font-size:10px;
+    letter-spacing:5px; text-transform:uppercase; margin-bottom:14px;
+  }
+  .cover-title {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:clamp(60px,10vw,110px); font-weight:800;
+    line-height:0.88; letter-spacing:-2px; color:#fff; margin-bottom:20px;
+  }
+  .cover-title span { display:block; }
+  .cover-sub { font-size:13px; color:var(--muted); letter-spacing:0.5px; margin-bottom:28px; line-height:1.5; }
+  .cover-tags { display:flex; gap:8px; flex-wrap:wrap; }
+  .ctag {
+    border:1px solid var(--border); color:var(--muted); font-size:10px;
+    font-family:'Barlow Condensed',sans-serif; letter-spacing:2px;
+    text-transform:uppercase; padding:4px 10px; border-radius:2px;
+  }
+  .cover-num {
+    position:absolute; right:64px; bottom:64px; z-index:2;
+    font-family:'Barlow Condensed',sans-serif; font-size:10px;
+    letter-spacing:3px; text-transform:uppercase; color:var(--muted);
+  }
+
+  /* ── VOORBLAD ── */
+  .main-cover {
+    position:relative; width:100%; min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    overflow:hidden; background:var(--dark);
+  }
+  .main-grid {
+    position:absolute; inset:0;
+    background-image:linear-gradient(rgba(30,45,69,0.3) 1px, transparent 1px),
+                     linear-gradient(90deg, rgba(30,45,69,0.3) 1px, transparent 1px);
+    background-size:56px 56px;
+  }
+  .main-body { position:relative; z-index:2; padding:80px; }
+  .main-eyebrow {
+    font-family:'Barlow Condensed',sans-serif; font-size:10px;
+    letter-spacing:5px; text-transform:uppercase; color:#00AEEF; margin-bottom:20px;
+  }
+  .main-title {
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:clamp(64px,11vw,116px); font-weight:800;
+    line-height:0.88; letter-spacing:-2px; color:#fff; margin-bottom:14px;
+  }
+  .main-title span { color:#00AEEF; }
+  .main-sub {
+    font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:300;
+    color:var(--muted); letter-spacing:3px; text-transform:uppercase; margin-bottom:48px;
+  }
+  .brand-pills { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:56px; }
+  .bpill {
+    display:flex; align-items:center; gap:10px;
+    background:rgba(255,255,255,0.04); border:1px solid var(--border);
+    padding:10px 18px; border-radius:3px;
+    font-family:'Barlow Condensed',sans-serif; font-size:14px;
+    letter-spacing:2px; text-transform:uppercase; color:var(--text);
+  }
+  .bpill .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .main-meta {
+    position:absolute; bottom:48px; left:80px; right:80px; z-index:2;
+    display:flex; justify-content:space-between; align-items:flex-end;
+    font-family:'Barlow Condensed',sans-serif; font-size:10px;
+    letter-spacing:3px; text-transform:uppercase; color:var(--muted);
+  }
+
+  /* ── PAGE ── */
+  .page { max-width:1100px; margin:0 auto; padding:40px 48px; }
+
+  /* ── HEADERS ── */
+  .section-label {
+    font-family:'Barlow Condensed',sans-serif; font-size:10px;
+    letter-spacing:4px; text-transform:uppercase; margin-bottom:6px; margin-top:32px;
+  }
+  .section-title {
+    font-family:'Barlow Condensed',sans-serif; font-size:32px;
+    font-weight:600; letter-spacing:-0.5px; color:#fff; margin-bottom:18px; line-height:1.05;
+  }
+  hr.div { border:none; border-top:1px solid var(--border); margin:28px 0; }
+
+  /* ── GRID ── */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:start; }
+  .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+
+  /* ── STATS ── */
+  .stat-row {
+    display:flex; border:1px solid var(--border);
+    border-radius:4px; overflow:hidden; margin-bottom:24px;
+  }
+  .stat { flex:1; padding:14px 16px; border-right:1px solid var(--border); text-align:center; }
+  .stat:last-child { border-right:none; }
+  .stat-num { font-family:'Barlow Condensed',sans-serif; font-size:30px; font-weight:800; line-height:1; margin-bottom:3px; }
+  .stat-label { font-size:10px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+
+  /* ── CARDS ── */
+  .card { background:var(--card); border:1px solid var(--border); border-radius:4px; padding:16px; }
+  .card-title { font-family:'Barlow Condensed',sans-serif; font-size:12px; letter-spacing:3px; text-transform:uppercase; margin-bottom:8px; }
+  .card p { color:var(--muted); font-size:12px; line-height:1.55; }
+
+  /* ── FEATURE BLOCK ── */
+  .fb { padding:11px 16px; background:var(--card); margin-bottom:10px; border-radius:0 4px 4px 0; }
+  .fb strong { display:block; font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:600; color:#fff; margin-bottom:3px; }
+  .fb p { color:var(--muted); font-size:12px; line-height:1.5; }
+
+  /* ── TIMELINE ── */
+  .tl { position:relative; padding-left:24px; }
+  .tl::before { content:''; position:absolute; left:4px; top:6px; bottom:0; width:1px; background:var(--border); }
+  .tl-item { position:relative; margin-bottom:12px; }
+  .tl-item::before { content:''; position:absolute; left:-20px; top:5px; width:7px; height:7px; border-radius:50%; }
+  .tl-year { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:600; letter-spacing:2px; margin-bottom:1px; }
+  .tl-text { font-size:12px; color:var(--muted); line-height:1.45; }
+
+  /* ── TAG GRID ── */
+  .tag-grid { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
+  .dtag { font-size:11px; padding:4px 12px; border-radius:2px; font-family:'Barlow Condensed',sans-serif; letter-spacing:1px; border:1px solid; }
+
+  /* ── IMAGE BOX ── */
+  .img-box {
+    background:var(--card); border:1px solid var(--border); border-radius:4px;
+    aspect-ratio:16/9; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:8px; color:var(--muted);
+    font-size:10px; letter-spacing:2px; text-transform:uppercase;
+    font-family:'Barlow Condensed',sans-serif; overflow:hidden; position:relative;
+  }
+  .img-box img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:4px; }
+  .img-box .hint {
+    position:relative; z-index:1; text-align:center; padding:12px;
+    background:rgba(10,14,26,0.75); border-radius:4px; font-size:10px;
+  }
+  .photo-note {
+    background:rgba(255,200,0,0.04); border:1px dashed rgba(255,200,0,0.25);
+    border-radius:4px; padding:7px 12px; font-size:10px; color:rgba(255,200,0,0.65);
+    margin-top:6px; font-family:'Barlow Condensed',sans-serif;
+    letter-spacing:1px; text-transform:uppercase;
+  }
+
+  /* ── COMPETITOR ── */
+  .comp { display:flex; gap:14px; align-items:flex-start; padding:16px; background:var(--card); border:1px solid var(--border); border-radius:4px; margin-bottom:10px; }
+  .comp-letter { font-family:'Barlow Condensed',sans-serif; font-size:24px; font-weight:800; opacity:0.35; line-height:1; min-width:24px; }
+  .comp-name { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:600; color:#fff; margin-bottom:3px; }
+  .comp-desc { font-size:12px; color:var(--muted); line-height:1.5; }
+
+  /* ── EXIST BLOCK ── */
+  .exist { border-radius:4px; padding:24px; }
+  .exist p.lead { font-size:14px; color:#fff; margin-bottom:10px; font-weight:500; }
+  .exist ul { padding-left:18px; margin-top:8px; }
+  .exist li { color:var(--muted); font-size:12.5px; line-height:1.6; margin-bottom:6px; }
+  .exist .note { color:var(--muted); font-size:12px; margin-top:12px; font-style:italic; }
+
+  /* ── SOURCES ── */
+  .sources { max-width:1100px; margin:0 auto; padding:40px 48px; }
+  .source-item { padding:12px 0; border-bottom:1px solid var(--border); display:grid; grid-template-columns:28px 1fr; gap:14px; align-items:start; }
+  .src-num { font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:600; color:var(--muted); letter-spacing:1px; }
+  .src-text { font-size:12px; color:var(--muted); line-height:1.6; }
+  .src-text strong { color:var(--text); font-weight:500; }
+
+  /* ── FOOTER ── */
+  footer { border-top:1px solid var(--border); padding:20px 48px; max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; font-size:10px; color:var(--muted); letter-spacing:1px; }
+  footer span { font-family:'Barlow Condensed',sans-serif; }
+
+  .no-print-bar { text-align:center; padding:12px; background:#0d1a2e; color:var(--muted); font-size:11px; border-bottom:1px solid var(--border); }
+
+  /* ── INLINE TEXT ── */
+  p.body { color:var(--muted); margin-bottom:10px; }
+  strong.inline { color:var(--text); font-weight:500; }
+</style>
+</head>
+<body>
+
+<!--VOORBLAD-->
+<div class="main-cover cover">
+  <div class="main-grid"></div>
+  <div class="cover-bg" style="background:radial-gradient(ellipse 60% 70% at 75% 50%, rgba(0,174,239,0.09) 0%, transparent 65%),radial-gradient(ellipse 40% 60% at 10% 80%, rgba(0,60,120,0.14) 0%, transparent 60%);"></div>
+
+  <div class="cover-img-wrap" style="width:100%;right:0;">
+    <img src="images/voorblad.jpg" alt="volvo c30"> 
+    <div class="ph">
+    </div>
+  </div>
+  <div class="cover-grad" style="background:linear-gradient(to right, var(--dark) 55%, transparent 82%);"></div>
+
+  <div class="main-body">
+    <div class="main-eyebrow">Hogeschool Rotterdam - HBO Automotive Engineering - EASADE01K</div>
+    <h1 class="main-title">Merken<span>Analyse</span></h1>
+    <p class="main-sub">Automotive Design · Opdracht 1 · Analyseren</p>
+    <div class="brand-pills">
+      <div class="bpill"><div class="dot" style="background:#00AEEF"></div>NIO</div>
+      <div class="bpill"><div class="dot" style="background:#4A9FD5"></div>Volvo</div>
+      <div class="bpill"><div class="dot" style="background:#E8373B"></div>Rimac</div>
+    </div>
+  </div>
+
+  <div class="main-meta">
+    <span>Manuel van Es · 1014608</span>
+    <span>1 juni 2026</span>
+  </div>
+</div>
+
+
+<!-- NIO COVER -->
+<div class="cover brand-cover">
+  <div class="cover-bg" style="background:radial-gradient(ellipse 80% 60% at 70% 40%, rgba(0,174,239,0.14) 0%, transparent 70%),radial-gradient(ellipse 50% 80% at 15% 80%, rgba(0,80,140,0.18) 0%, transparent 60%);"></div>
+  <div class="cover-img-wrap">
+    <img src="images/nio_cover.jpg" alt="NIO">
+  </div>
+  <div class="cover-grad"></div>
+  <div class="cover-body">
+    <div class="cover-eyebrow" style="color:#00AEEF">Merkenanalyse · Automotive Design · Hogeschool Rotterdam</div>
+    <h1 class="cover-title">NIO<span style="color:#00AEEF">Electric</span></h1>
+    <p class="cover-sub">Chinees premium EV-merk · Opgericht 2014 · Shanghai<br>"Blue Sky Coming"</p>
+    <div class="cover-tags">
+      <span class="ctag">Battery Swap</span><span class="ctag">Premium EV</span>
+      <span class="ctag">Smart Tech</span><span class="ctag">China &amp; Europa</span>
+    </div>
+  </div>
+  <div class="cover-num">Analyse 01 / 03</div>
+</div>
+
+<!-- NIO stats + doelgroep + styling -->
+<div class="page">
+
+  <!-- STATS -->
+  <div class="stat-row avoid-break">
+    <div class="stat"><div class="stat-num" style="color:#00AEEF">2014</div><div class="stat-label">Opgericht</div></div>
+    <div class="stat"><div class="stat-num" style="color:#00AEEF">2.300+</div><div class="stat-label">Swap stations</div></div>
+    <div class="stat"><div class="stat-num" style="color:#00AEEF">1.360pk</div><div class="stat-label">EP9 vermogen</div></div>
+    <div class="stat"><div class="stat-num" style="color:#00AEEF">40%</div><div class="stat-label">Marktaandeel luxe EV China</div></div>
+  </div>
+
+  <!-- 01 DOELGROEP -->
+  <div class="avoid-break">
+    <div class="section-label" style="color:#00AEEF">01 — Doelgroep</div>
+    <h2 class="section-title">Wie koopt een NIO?</h2>
+    <div class="two-col">
+      <div>
+        <p class="body">NIO richt zich op welvarende, technologisch onderlegde consumenten, voornamelijk in China, maar ook in Europa (Noorwegen, Duitsland en Nederland).</p>
+        <div class="tag-grid">
+          <span class="dtag" style="color:#00AEEF;border-color:rgba(0,174,239,0.3);background:rgba(0,174,239,0.07)">Hoogopgeleid - 28–45 jr</span>
+          <span class="dtag" style="color:#00AEEF;border-color:rgba(0,174,239,0.3);background:rgba(0,174,239,0.07)">Stedelijke early adopters</span>
+          <span class="dtag" style="color:#00AEEF;border-color:rgba(0,174,239,0.3);background:rgba(0,174,239,0.07)">Premium EV-kopers</span>
+          <span class="dtag" style="color:#00AEEF;border-color:rgba(0,174,239,0.3);background:rgba(0,174,239,0.07)">Community-gericht</span>
+        </div>
+      </div>
+      <div>
+        <div class="img-box">
+          <img src="images/nio_house.jpg" alt="NIO House">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 02 STYLING -->
+  <div class="avoid-break">
+    <div class="section-label" style="color:#00AEEF">02 — Unieke Styling Features</div>
+    <h2 class="section-title">Design DNA</h2>
+    <div class="three-col" style="margin-bottom:16px;">
+      <div>
+        <div class="img-box"><img src="images/nio_front.jpg" alt="NIO"></div>
+      </div>
+      <div>
+        <div class="img-box"><img src="images/nio_design.jpg" alt="NIO floating roof"></div>
+      </div>
+      <div>
+        <div class="img-box"><img src="images/nio_interior.jpg" alt="NIO interieur"></div></div>
+      </div>
+    </div>
+    <div class="three-col avoid-break">
+      <div class="card"><div class="card-title" style="color:#00AEEF">Lichtbanden</div><p>Horizontale LED-strips voor- en achterin maken de auto optisch breder. Kenmerkend voor alle modellen.</p></div>
+      <div class="card"><div class="card-title" style="color:#00AEEF">Floating roof</div><p>Contrasterende daklijn creëert een zwevend dak-effect bij de coupé-SUV modellen (EC6, EC7).</p></div>
+      <div class="card"><div class="card-title" style="color:#00AEEF">NOMI AI + modelnamen</div><p>Fysieke AI-bol op dashboard. Modelnamen als code: ET = sedan, ES = SUV, EC = coupé-SUV.</p></div>
+    </div>
+  </div>
+  </div>
+
+</div><!-- end page -->
+
+<!-- NIO techniek + geschiedenis + concurrenten + bestaansrecht -->
+<div class="page" style="padding-top:32px;">
+
+  <!-- 03 TECHNIEK -->
+  <div class="section-label" style="color:#00AEEF;page-break-before:always;">03 — Unieke Technische Features</div>
+  <h2 class="section-title">Technologie</h2>
+  <div class="two-col avoid-break">
+    <div>
+      <div class="fb" style="border-left:3px solid #00AEEF"><strong>EP9 — 1 Megawatt</strong><p>Vier elektromotoren (één per wiel) met elk een eigen versnellingsbak. Samen 1.360 pk of 1 Megawatt, brak in 2016 het Nürburgring-record voor elektrische auto's (6:45.9).</p></div>
+      <div class="fb" style="border-left:3px solid #00AEEF"><strong>NT2.0 rijassistentie</strong><p>LiDAR-gebaseerd platform met 33 sensoren voor volledig autonoom rijden. Vergelijkbaar met Tesla FSD, maar met extra hardware.</p></div>
+    </div>
+    <div>
+	  <div class="fb" style="border-left:3px solid #00AEEF"><strong>Battery-as-a-Service (BaaS)</strong><p>In minder dan 5 minuten wordt de lege batterij automatisch vervangen in een Power Swap Station. Meer dan 2.300 locaties wereldwijd, geen enkel ander merk biedt dit aan op deze schaal.</p></div>
+      <div class="img-box" style="aspect-ratio:16/7;"><img src="images/nio_swap.jpg" alt="BaaS"></div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 04 GESCHIEDENIS -->
+  <div class="section-label" style="color:#00AEEF">04 — Geschiedenis</div>
+  <h2 class="section-title">Successen &amp; Mijlpalen</h2>
+  <div class="two-col avoid-break">
+    <div class="tl">
+      <div class="tl-item"><div class="tl-year" style="color:#00AEEF">2014</div><div class="tl-text">Oprichting als NextEV door William Li in Shanghai</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#00AEEF">2016</div><div class="tl-text">Launch EP9 — brak Nürburgring EV-record (6:45.9)</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#00AEEF">2017</div><div class="tl-text">EP9 reed autonoom Circuit of the Americas-record</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#00AEEF">2018</div><div class="tl-text">Start leveringen ES8 SUV met battery-swap. Beursgang NYSE</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#00AEEF">2022</div><div class="tl-text">Uitrol naar Europa: Noorwegen en Duitsland</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#00AEEF">2024</div><div class="tl-text">Launch ET9 flagship + sub-brand <em>firefly</em> voor betaalbare stadswagens</div></div>
+    </div>
+    <div>
+      <div class="img-box" style="aspect-ratio:4/3;"><img src="images/nio_ep9.jpg" alt="EP9"></div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 05 + 06 naast elkaar -->
+  <div class="two-col avoid-break">
+    <div>
+      <div class="section-label" style="color:#00AEEF">05 — Concurrenten</div>
+      <h2 class="section-title">Vergelijkbare merken</h2>
+      <div class="comp"><div class="comp-letter" style="color:#00AEEF">T</div><div><div class="comp-name">Tesla</div><div class="comp-desc">Vergelijkbare positionering: tech-eerst, directe verkoop, premium EV. Geen battery-swap netwerk.</div></div></div>
+      <div class="comp"><div class="comp-letter" style="color:#00AEEF">X</div><div><div class="comp-name">Xpeng (XPEV)</div><div class="comp-desc">Chinees EV-merk in dezelfde prijsklasse met sterke rijassistentie (XNGP). Ook actief in Europa.</div></div></div>
+      <div class="two-col" style="margin-top:12px;gap:12px;">
+        <div>
+          <div class="img-box" style="aspect-ratio:16/9;"><img src="images/nio_comp_tesla.jpg" alt="Tesla"></div>
+        </div>
+        <div>
+          <div class="img-box" style="aspect-ratio:16/9;"><img src="images/nio_comp_xpeng.jpg" alt="Xpeng"></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="section-label" style="color:#00AEEF">06 — Bestaansrecht</div>
+      <h2 class="section-title">Heeft NIO bestaansrecht?</h2>
+      <div class="exist" style="background:linear-gradient(135deg,rgba(0,174,239,0.07) 0%,rgba(0,174,239,0.02) 100%);border:1px solid rgba(0,174,239,0.2);">
+        <p class="lead">Ja, dankzij een unieke combinatie van technologie, community en schaalbaarheid.</p>
+        <ul>
+          <li>Battery-swap lost het laadtijdprobleem radicaal op, ongeëvenaard op schaal</li>
+          <li>Volledig ecosysteem: energie, software, community en lifestyle (NIO Houses, NIO Day)</li>
+          <li>NIO trekt klanten aan die anders voor Tesla, BMW of Mercedes zouden kiezen</li>
+          <li>Uitbreiding naar Europa toont ambitie en langetermijnstrategie</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!--VOLVO COVER-->
+<div class="cover brand-cover">
+  <div class="cover-bg" style="background:radial-gradient(ellipse 80% 60% at 70% 40%, rgba(74,159,213,0.13) 0%, transparent 70%),radial-gradient(ellipse 50% 80% at 15% 80%, rgba(30,70,120,0.18) 0%, transparent 60%);"></div>
+  <div class="cover-img-wrap">
+    <img src="images/volvo_cover.jpg" alt="Volvo">
+  </div>
+  <div class="cover-grad"></div>
+  <div class="cover-body">
+    <div class="cover-eyebrow" style="color:#4A9FD5">Merkenanalyse · Automotive Design · Hogeschool Rotterdam</div>
+    <h1 class="cover-title">Volvo<span style="color:#4A9FD5">Cars</span></h1>
+    <p class="cover-sub">Zweeds premium automerk · Opgericht 1927 · Göteborg<br>"For Life"</p>
+    <div class="cover-tags">
+      <span class="ctag">Veiligheid</span><span class="ctag">Scandinavisch Design</span>
+      <span class="ctag">Electrificatie</span><span class="ctag">Duurzaamheid</span>
+    </div>
+  </div>
+  <div class="cover-num">Analyse 02 / 03</div>
+</div>
+
+<!-- VOLVO stats + doelgroep + styling -->
+<div class="page">
+
+  <div class="stat-row avoid-break">
+    <div class="stat"><div class="stat-num" style="color:#4A9FD5">1927</div><div class="stat-label">Opgericht</div></div>
+    <div class="stat"><div class="stat-num" style="color:#4A9FD5">763k</div><div class="stat-label">Verkopen 2024</div></div>
+    <div class="stat"><div class="stat-num" style="color:#4A9FD5">48%</div><div class="stat-label">Geëlektrificeerd EU 2024</div></div>
+    <div class="stat"><div class="stat-num" style="color:#4A9FD5">1959</div><div class="stat-label">Driepuntsgordel uitvinding</div></div>
+  </div>
+
+  <!-- 01 DOELGROEP -->
+  <div class="avoid-break">
+    <div class="section-label" style="color:#4A9FD5">01 — Doelgroep</div>
+    <h2 class="section-title">Wie koopt een Volvo?</h2>
+    <div class="two-col">
+      <div>
+        <p class="body">Volvo Cars is een Zweeds automerk opgericht in 1927 in Göteborg, tegenwoordig eigendom van de Chinese Geely Group (sinds 2010), maar volledig zelfstandig opererend met een Scandinavische identiteit.</p>
+        <p class="body">Volvo richt zich op een brede premiumklasse: gezinnen die veiligheid prioriteit geven, milieubewuste consumenten en professionals (30–55 jaar) die comfort en design combineren.</p>
+        <div class="tag-grid">
+          <span class="dtag" style="color:#4A9FD5;border-color:rgba(74,159,213,0.3);background:rgba(74,159,213,0.07)">Gezinnen - 30–55 jr</span>
+          <span class="dtag" style="color:#4A9FD5;border-color:rgba(74,159,213,0.3);background:rgba(74,159,213,0.07)">Milieubewust</span>
+          <span class="dtag" style="color:#4A9FD5;border-color:rgba(74,159,213,0.3);background:rgba(74,159,213,0.07)">Veiligheid-eerst</span>
+          <span class="dtag" style="color:#4A9FD5;border-color:rgba(74,159,213,0.3);background:rgba(74,159,213,0.07)">Design-liefhebbers</span>
+        </div>
+      </div>
+      <div>
+        <div class="img-box"><img src="images/volvo_lifestyle.jpg" alt="Volvo"></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 02 STYLING -->
+  <div class="avoid-break">
+    <div class="section-label" style="color:#4A9FD5">02 — Unieke Styling Features</div>
+    <h2 class="section-title">Scandinavisch Design</h2>
+    <div class="three-col" style="margin-bottom:16px;">
+      <div>
+        <div class="img-box"><img src="images/volvo_lights.jpg" alt="Thor's Hammer"></div>
+      </div>
+      <div>
+        <div class="img-box"><img src="images/volvo_interior.jpg" alt="Volvo interieur"></div>
+      </div>
+      <div>
+        <div class="img-box"><img src="images/volvo_design.jpg" alt="Volvo design"></div>
+      </div>
+    </div>
+    <div class="three-col avoid-break">
+      <div class="card"><div class="card-title" style="color:#4A9FD5">Thor's Hammer</div><p>'Thor's Hammer' LED-dagrijverlichting voorin, herkenbaar kenmerk op alle moderne Volvo's.</p></div>
+      <div class="card"><div class="card-title" style="color:#4A9FD5">Minimalistisch interieur</div><p>Zwevend centraal touchscreen, rustgevend kleurenpalet en gebruik van Zweedse wol, hout en gerecycled leer.</p></div>
+      <div class="card"><div class="card-title" style="color:#4A9FD5">Iron mark &amp; lichtband</div><p>Subtiele Zweedse designelementen en horizontale achterlichtband over volledige breedte van de auto.</p></div>
+    </div>
+  </div>
+
+</div><!-- end page -->
+
+<!-- VOLVO techniek + geschiedenis + concurrenten + bestaansrecht -->
+<div class="page" style="padding-top:32px;">
+
+  <!-- 03 TECHNIEK -->
+  <div class="section-label" style="color:#4A9FD5;page-break-before:always;">03 — Unieke Technische Features</div>
+  <h2 class="section-title">Technologie &amp; Veiligheid</h2>
+  <div class="two-col avoid-break">
+    <div>
+      <div class="fb" style="border-left:3px solid #4A9FD5"><strong>Driepuntsgordel (1959)</strong><p>Uitgevonden door Nils Bohlin bij Volvo, gratis beschikbaar gesteld aan de industrie. Schatting: meer dan 1 miljoen levens gered.</p></div>
+      <div class="fb" style="border-left:3px solid #4A9FD5"><strong>City Safety</strong><p>Automatisch noodremsysteem geïntroduceerd in 2008, een van de eerste ter wereld, nu standaard op alle modellen.</p></div>
+      <div class="fb" style="border-left:3px solid #4A9FD5"><strong>Rijgedragmonitoring</strong><p>De EX90 detecteert vermoeidheid, afleiding of dronkenschap van de bestuurder via real-time sensortechnologie.</p></div>
+    </div>
+    <div>
+      <div class="fb" style="border-left:3px solid #4A9FD5"><strong>SPA &amp; CMA platform</strong><p>Scalable Product Architecture voor SUV's; CMA voor compacte modellen — beide ondersteunen ICE, hybride én volledig elektrisch.</p></div>
+      <div class="fb" style="border-left:3px solid #4A9FD5"><strong>Plug-in hybride strategie</strong><p>Bijna alle Volvo's leverbaar als PHEV. In Q3 2024 bestond 48% van de Europese verkoop uit geëlektrificeerde modellen.</p></div>
+      <div class="img-box" style="aspect-ratio:16/7;"><img src="images/volvo_safety.jpg" alt="Volvo veiligheid"></div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 04 GESCHIEDENIS -->
+  <div class="section-label" style="color:#4A9FD5">04 — Geschiedenis</div>
+  <h2 class="section-title">Successen &amp; Mijlpalen</h2>
+  <div class="two-col avoid-break">
+    <div class="tl">
+      <div class="tl-item"><div class="tl-year" style="color:#4A9FD5">1927</div><div class="tl-text">Oprichting door Gabrielsson &amp; Larsson in Göteborg</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#4A9FD5">1944</div><div class="tl-text">Introductie gelamineerde voorruit (shatterproof glass)</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#4A9FD5">1959</div><div class="tl-text">Uitvinding driepuntsgordel door Nils Bohlin</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#4A9FD5">1960s</div><div class="tl-text">Introductie achterwaarts kinderzitje, kreukelzones en veiligheidsvergrendeling</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#4A9FD5">1990s</div><div class="tl-text">Side Impact Protection System (SIPS) en zijairbags</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#4A9FD5">2010</div><div class="tl-text">Overname door Geely Group, schuldvrij, nieuwe investeringsruimte</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#4A9FD5">2017</div><div class="tl-text">Alle nieuwe modellen vanaf 2019 elektrisch of hybride</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#4A9FD5">2022</div><div class="tl-text">Launch EX90, volledig elektrische opvolger van de XC90</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#4A9FD5">2024</div><div class="tl-text">Verkooprecord 763.389 auto's; opening 'World of Volvo' museum</div></div>
+    </div>
+    <div>
+      <div class="img-box" style="aspect-ratio:4/3;"><img src="images/volvo_history.jpg" alt="Volvo classiek"></div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <div class="two-col avoid-break">
+    <div>
+      <div class="section-label" style="color:#4A9FD5">05 — Concurrenten</div>
+      <h2 class="section-title">Vergelijkbare merken</h2>
+      <div class="comp"><div class="comp-letter" style="color:#4A9FD5">B</div><div><div class="comp-name">BMW</div><div class="comp-desc">Vergelijkbaar premiumsegment, maar meer sportgericht en minder veiligheid-georiënteerd. De 3- en 5-serie overlappen met de S60/V60.</div></div></div>
+      <div class="comp"><div class="comp-letter" style="color:#4A9FD5">M</div><div><div class="comp-name">Mercedes-Benz</div><div class="comp-desc">Vergelijkbare prijsklasse en luxe-positionering. C- en E-klasse concurreren direct met de S60/V60 en XC60.</div></div></div>
+      <div class="two-col" style="margin-top:12px;gap:12px;">
+        <div>
+          <div class="img-box" style="aspect-ratio:16/9;"><img src="images/volvo_comp_bmw.jpg" alt="BMW"></div>
+        </div>
+        <div>
+          <div class="img-box" style="aspect-ratio:16/9;"><img src="images/volvo_comp_mercedes.jpg" alt="Mercedes"></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="section-label" style="color:#4A9FD5">06 — Bestaansrecht</div>
+      <h2 class="section-title">Heeft Volvo bestaansrecht?</h2>
+      <div class="exist" style="background:linear-gradient(135deg,rgba(74,159,213,0.07) 0%,rgba(74,159,213,0.02) 100%);border:1px solid rgba(74,159,213,0.2);">
+        <p class="lead">Ja, Volvo is relevanter dan ooit met een unieke positie die geen ander merk zomaar overneemt.</p>
+        <ul>
+          <li>Veiligheid is tijdloos, Volvo blijft de absolute benchmark voor de industrie</li>
+          <li>Elektrificeringsstrategie is geloofwaardig: helft Europese verkoop al geëlektrificeerd</li>
+          <li>Scandinavisch design spreekt een groeiende groep consumenten aan</li>
+          <li>Geely's financiële kracht + Volvo's R&amp;D-cultuur = snelle productvernieuwing</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end Volvo -->
+
+
+<!-- RIMAC COVER -->
+<div class="cover brand-cover">
+  <div class="cover-bg" style="background:radial-gradient(ellipse 80% 60% at 70% 40%, rgba(232,55,59,0.13) 0%, transparent 70%),radial-gradient(ellipse 50% 80% at 15% 80%, rgba(100,10,15,0.2) 0%, transparent 60%);"></div>
+  <div class="cover-img-wrap">
+    <img src="rimac_cover.jpg" alt="Rimac">
+  </div>
+  <div class="cover-grad"></div>
+  <div class="cover-body">
+    <div class="cover-eyebrow" style="color:#E8373B">Merkenanalyse · Automotive Design · Hogeschool Rotterdam</div>
+    <h1 class="cover-title">Rimac<span style="color:#E8373B">Automobili</span></h1>
+    <p class="cover-sub">Kroatische EV-hypercar fabrikant · Opgericht 2009 · Zagreb<br>Van garage naar Bugatti Rimac</p>
+    <div class="cover-tags">
+      <span class="ctag">Hypercar</span><span class="ctag">2.107 pk</span>
+      <span class="ctag">Bugatti Rimac</span><span class="ctag">EV Technologie B2B</span>
+    </div>
+  </div>
+  <div class="cover-num">Analyse 03 / 03</div>
+</div>
+
+<!-- RIMAC stats + doelgroep + styling -->
+<div class="page">
+
+  <div class="stat-row avoid-break">
+    <div class="stat"><div class="stat-num" style="color:#E8373B">2009</div><div class="stat-label">Opgericht</div></div>
+    <div class="stat"><div class="stat-num" style="color:#E8373B">2.107pk</div><div class="stat-label">Nevera R vermogen</div></div>
+    <div class="stat"><div class="stat-num" style="color:#E8373B">1.82s</div><div class="stat-label">0–100 km/h</div></div>
+    <div class="stat"><div class="stat-num" style="color:#E8373B">412</div><div class="stat-label">km/h topsnelheid</div></div>
+  </div>
+
+  <!-- 01 DOELGROEP -->
+  <div class="avoid-break">
+    <div class="section-label" style="color:#E8373B">01 — Doelgroep</div>
+    <h2 class="section-title">Wie koopt een Rimac?</h2>
+    <div class="two-col">
+      <div>
+        <p class="body">Rimac richt zich op een extreem niche doelgroep: rijke verzamelaars van hypercars (netto vermogen &gt;€10 miljoen), technisch onderlegde liefhebbers en investeerders in exclusiviteit. De productie is bewust beperkt, 150 Nevera's en 40 Nevera R's ooit.</p>
+        <p class="body">De grotere businesskant is <strong class="inline">Rimac Technology</strong> als B2B-leverancier van EV-systemen aan Porsche, Hyundai, Koenigsegg en Aston Martin.</p>
+        <div class="tag-grid">
+          <span class="dtag" style="color:#E8373B;border-color:rgba(232,55,59,0.3);background:rgba(232,55,59,0.07)">Ultra-vermogende klanten</span>
+          <span class="dtag" style="color:#E8373B;border-color:rgba(232,55,59,0.3);background:rgba(232,55,59,0.07)">Hypercar-collectioneurs</span>
+          <span class="dtag" style="color:#E8373B;border-color:rgba(232,55,59,0.3);background:rgba(232,55,59,0.07)">OEM B2B klanten</span>
+        </div>
+      </div>
+      <div>
+        <div class="img-box"><img src="images/rimac_nevera.jpg" alt="Nevera"></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 02 STYLING -->
+  <div class="avoid-break">
+    <div class="section-label" style="color:#E8373B">02 — Unieke Styling Features</div>
+    <h2 class="section-title">Design DNA</h2>
+    <div class="three-col" style="margin-bottom:16px;">
+      <div>
+        <div class="img-box"><img src="images/rimac_front.jpg" alt="Rimac"></div>
+      </div>
+      <div>
+        <div class="img-box"><img src="images/rimac_interior.jpg" alt="Rimac interieur"></div>
+      </div>
+      <div>
+        <div class="img-box"><img src="images/rimac_design.jpg" alt="Rimac design"></div>
+      </div>
+    </div>
+    <div class="three-col avoid-break">
+      <div class="card"><div class="card-title" style="color:#E8373B">Form follows function</div><p>Elke carrosserie-lijn heeft een aerodynamisch doel. Carbon fiber monocoque is zichtbaar aanwezig als visueel kenmerk.</p></div>
+      <div class="card"><div class="card-title" style="color:#E8373B">Vlinderdeuren + stance</div><p>Butterfly doors openen omhoog. Brede, lage stance met 21-inch achterwielen voor voorwaarts drijvende houding.</p></div>
+      <div class="card"><div class="card-title" style="color:#E8373B">Bespoke interieurs</div><p>Handgestikt leer, asymmetrische stoelindeling. Nevera R heeft 2 mm breed daksierstreepje met circuit-board motief.</p></div>
+    </div>
+  </div>
+
+</div><!-- end page -->
+
+<!-- RIMAC Techniek + geschiedenis -->
+<div class="page" style="padding-top:32px;">
+
+  <!-- 03 TECHNIEK -->
+  <div class="section-label" style="color:#E8373B;page-break-before:always;">03 — Unieke Technische Features</div>
+  <h2 class="section-title">Technologie</h2>
+  <div class="two-col avoid-break">
+    <div>
+      <div class="fb" style="border-left:3px solid #E8373B"><strong>Vier individuele motoren (AWTVq)</strong><p>Eén motor per wiel met eigen single-speed versnellingsbak. All-Wheel Torque Vectoring voor maximale rijdynamica in alle situaties.</p></div>
+      <div class="fb" style="border-left:3px solid #E8373B"><strong>2.107 pk (Nevera R)</strong><p>Vier permanente magneet synchronmotoren, meer dan vrijwel elke andere straatauto ter wereld.</p></div>
+      <div class="fb" style="border-left:3px solid #E8373B"><strong>0–100 in 1.82 seconden</strong><p>De Nevera zette 23 prestatierecords op één dag (mei 2023), waaronder 0-100 km/h in 1.82s.</p></div>
+    </div>
+    <div>
+      <div class="fb" style="border-left:3px solid #E8373B"><strong>412 km/h topsnelheid</strong><p>Bereikte 412 km/h op het Papenburg testcircuit, een van de snelste elektrische productieauto's ooit.</p></div>
+      <div class="fb" style="border-left:3px solid #E8373B"><strong>Rimac Technology als toeleverancier</strong><p>Levert complete EV-powertrains en batterijpakketten aan Porsche, Hyundai, Koenigsegg en Pininfarina.</p></div>
+      <div class="img-box" style="aspect-ratio:16/7;"><img src="images/rimac_record.jpg" alt="Record"></div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- 04 GESCHIEDENIS -->
+  <div class="section-label" style="color:#E8373B">04 — Geschiedenis</div>
+  <h2 class="section-title">Successen &amp; Mijlpalen</h2>
+  <div class="two-col avoid-break">
+    <div class="tl">
+      <div class="tl-item"><div class="tl-year" style="color:#E8373B">2007</div><div class="tl-text">Mate Rimac (19 jr) bouwt BMW E30 om naar elektrisch, de "Green Monster" breekt records</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#E8373B">2009</div><div class="tl-text">Oprichting Rimac Automobili in Kroatië</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#E8373B">2011</div><div class="tl-text">Launch Concept_One, eerste echte elektrische hypercar ter wereld</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#E8373B">2016–18</div><div class="tl-text">Investeringen Porsche en Hyundai-Kia; groei naar &gt;1.000 medewerkers</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#E8373B">2021</div><div class="tl-text">Fusie met Bugatti, Bugatti Rimac JV; Mate Rimac CEO van beide merken</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#E8373B">2022</div><div class="tl-text">Start leveringen Nevera; 412 km/h topsnelheidsrecord Papenburg</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#E8373B">2023</div><div class="tl-text">Nevera breekt 23 prestatierecords op één dag bij Goodwood Festival of Speed</div></div>
+      <div class="tl-item"><div class="tl-year" style="color:#E8373B">2024</div><div class="tl-text">Introductie Nevera R (2.107 pk); waardering Rimac Group boven €2 miljard</div></div>
+    </div>
+    <div>
+      <div class="img-box" style="aspect-ratio:4/3;"><img src="images/rimac_mate.jpg" alt="Mate Rimac"></div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <div class="two-col avoid-break">
+    <div>
+      <div class="section-label" style="color:#E8373B">05 — Concurrenten</div>
+      <h2 class="section-title">Vergelijkbare merken</h2>
+      <div class="comp"><div class="comp-letter" style="color:#E8373B">K</div><div><div class="comp-name">Koenigsegg</div><div class="comp-desc">Zweeds hypercar-merk met vergelijkbare focus op extreme prestaties en exclusiviteit. ICE- en hybride-hypercars; inmiddels bevriende concurrenten.</div></div></div>
+      <div class="comp"><div class="comp-letter" style="color:#E8373B">B</div><div><div class="comp-name">Bugatti</div><div class="comp-desc">Nu zustermerk via Bugatti Rimac, maar voor de fusie de directe concurrent in het ultra-luxe hypercar-segment.</div></div></div>
+      <div class="two-col" style="margin-top:12px;gap:12px;">
+        <div>
+          <div class="img-box" style="aspect-ratio:16/9;"><img src="images/rimac_comp_koenigsegg.jpg" alt="Koenigsegg"></div>
+        </div>
+        <div>
+          <div class="img-box" style="aspect-ratio:16/9;"><img src="images/rimac_comp_bugatti.jpg" alt="Bugatti"></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="section-label" style="color:#E8373B">06 — Bestaansrecht</div>
+      <h2 class="section-title">Heeft Rimac bestaansrecht?</h2>
+      <div class="exist" style="background:linear-gradient(135deg,rgba(232,55,59,0.07) 0%,rgba(232,55,59,0.02) 100%);border:1px solid rgba(232,55,59,0.2);">
+        <p class="lead">Ja, Rimac is eigenlijk twee bedrijven in één, beide met een sterke toekomst.</p>
+        <ul>
+          <li>Als hypercar-fabrikant: extreme exclusiviteit maakt het het meest begeerlijke EV-merk voor hypercars</li>
+          <li>Als technologieleverancier: OEM's hebben Rimac's expertise nodig voor performance EV's</li>
+          <li>Bugatti-fusie en Porsche-samenwerking bewijzen serieuze erkenning door de industrie</li>
+          <li>Kroatische oorsprong zonder auto-traditie maakt het verhaal uniek en inspirerend</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end Rimac -->
+
+
+<!-- BRONNEN -->
+<div class="sources" style="page-break-before:always;">
+  <div class="section-label" style="color:var(--muted)">Bronvermelding</div>
+  <h2 class="section-title">Bronnen</h2>
+
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">NIO</div>
+  <div class="source-item avoid-break">
+    <div class="src-num">01</div>
+    <div class="src-text">Peeters, E. (2022, 1 december). <strong>Nio opent Power Swap Station in Nederland.</strong> <em>Aftersales Magazine.</em> https://aftersalesmagazine.nl/nieuws/connected-car/nio-opent-power-swap-station-in-nederland/</div>
+  </div>
+  <div class="source-item avoid-break">
+    <div class="src-num">02</div>
+    <div class="src-text"><strong>News | NIO.</strong> (z.d.). https://www.nio.com/news</div>
+  </div>
+  <div class="source-item avoid-break">
+    <div class="src-num">03</div>
+    <div class="src-text"><strong>NIO - EP9.</strong> (z.d.). https://www.nio.com/ep9</div>
+  </div>
+  <div class="source-item avoid-break">
+    <div class="src-num">04</div>
+    <div class="src-text">OpenAI. (2023). <em>ChatGPT</em> (13 Feb. versie) [Large language model]. chat.openai.com/chat</div>
+  </div>
+
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:24px 0 16px;">Volvo</div>
+  <div class="source-item avoid-break">
+    <div class="src-num">05</div>
+    <div class="src-text"><strong>Safety is in our DNA.</strong> (z.d.). <em>Volvo Cars.</em> https://www.volvocars.com/intl/safety/legacy/</div>
+  </div>
+  <div class="source-item avoid-break">
+    <div class="src-num">06</div>
+    <div class="src-text"><strong>Investor relations.</strong> (z.d.). https://investors.volvocars.com/</div>
+  </div>
+  <div class="source-item avoid-break">
+    <div class="src-num">07</div>
+    <div class="src-text"><strong>3-point safety belt from Volvo — the most effective lifesaver in traffic for fifty years.</strong> (z.d.). <em>Volvo Cars.</em> https://www.volvocars.com/intl/media/press-releases/B9D7CD66A06448F7/</div>
+  </div>
+  <div class="source-item avoid-break">
+    <div class="src-num">08</div>
+    <div class="src-text">OpenAI. (2023). <em>ChatGPT</em> (13 Feb. versie) [Large language model]. chat.openai.com/chat</div>
+  </div>
+
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:24px 0 16px;">Rimac</div>
+  <div class="source-item avoid-break">
+    <div class="src-num">09</div>
+    <div class="src-text"><strong>Nevera - Rimac Automobili.</strong> (2024, 29 februari). <em>Rimac Automobili.</em> https://www.rimac-automobili.com/nevera/</div>
+  </div>
+  <div class="source-item avoid-break">
+    <div class="src-num">10</div>
+    <div class="src-text"><strong>Latest News from Rimac – Rimac Newsroom.</strong> (2026, 8 juni). <em>Rimac Newsroom.</em> https://www.rimac-newsroom.com/</div>
+  </div>
+  <div class="source-item avoid-break">
+    <div class="src-num">11</div>
+    <div class="src-text"><strong>Rimac Group.</strong> (z.d.). https://www.rimac-group.com/</div>
+  </div>
+  <div class="source-item avoid-break">
+    <div class="src-num">12</div>
+    <div class="src-text">OpenAI. (2023). <em>ChatGPT</em> (13 Feb. versie) [Large language model]. chat.openai.com/chat</div>
+  </div>
+</div>
+
+<footer>
+  <span>Merkenanalyse · Automotive Design · Hogeschool Rotterdam · EASADE01K</span>
+  <span>Manuel van Es · 1014608 · 1 juni 2026</span>
+</footer>
+
+</body>
+</html>
